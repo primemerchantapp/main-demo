@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat Messenger</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
         /* Dark theme and messenger-like styling */
         body {
@@ -210,6 +211,70 @@
     </div>
 
     <script>
+        // WebSocket configuration
+        const websocketUrl = "wss://your-websocket-server-url"; // Replace with your WebSocket server URL
+
+        // WebSocket connection
+        let socket;
+
+        // Function to initialize WebSocket connection
+        function initWebSocket() {
+            socket = new WebSocket(websocketUrl);
+
+            // Handle WebSocket connection open
+            socket.onopen = () => {
+                console.log('WebSocket connection established.');
+                updateConnectionStatus(true);
+            };
+
+            // Handle WebSocket messages
+            socket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+                console.log('Received message:', response);
+                addMessageToChat('ai', response.message); // Add AI response to chat
+            };
+
+            // Handle WebSocket connection close
+            socket.onclose = () => {
+                console.log('WebSocket connection closed.');
+                updateConnectionStatus(false);
+            };
+
+            // Handle WebSocket errors
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus(false);
+            };
+        }
+
+        // Function to update connection status in the UI
+        function updateConnectionStatus(isConnected) {
+            const connectionDot = document.querySelector('.connection-dot');
+            const connectionStatusText = document.querySelector('.connection-status span');
+
+            if (isConnected) {
+                connectionDot.style.backgroundColor = '#34a853'; // Green for connected
+                connectionStatusText.textContent = 'Connected';
+            } else {
+                connectionDot.style.backgroundColor = '#ea4335'; // Red for disconnected
+                connectionStatusText.textContent = 'Disconnected';
+            }
+        }
+
+        // Function to send a message via WebSocket
+        function sendMessage(message) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const messageData = {
+                    type: 'message',
+                    content: message,
+                };
+                socket.send(JSON.stringify(messageData));
+                console.log('Message sent:', messageData);
+            } else {
+                console.error('WebSocket is not connected.');
+            }
+        }
+
         // Function to add a message to the chat log
         function addMessageToChat(sender, message) {
             const chatLog = document.getElementById('chat-log');
@@ -236,13 +301,11 @@
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        // Function to simulate AI response
-        function simulateAIResponse(userMessage) {
-            setTimeout(() => {
-                const aiResponse = `You said: "${userMessage}". This is the AI's response.`;
-                addMessageToChat('ai', aiResponse);
-            }, 1000); // Simulate a 1-second delay for the AI response
-        }
+        // Initialize WebSocket connection when the page loads
+        window.onload = () => {
+            initWebSocket();
+            addMessageToChat('ai', 'Hello! How can I assist you today?'); // Welcome message
+        };
 
         // Event listener for the send button
         document.getElementById('send-button').addEventListener('click', () => {
@@ -253,11 +316,11 @@
                 // Add user message to chat
                 addMessageToChat('user', userMessage);
 
+                // Send message via WebSocket
+                sendMessage(userMessage);
+
                 // Clear input field
                 chatInput.value = '';
-
-                // Simulate AI response
-                simulateAIResponse(userMessage);
             }
         });
 
@@ -267,11 +330,6 @@
                 document.getElementById('send-button').click();
             }
         });
-
-        // Optional: Add a welcome message from the AI
-        window.onload = () => {
-            addMessageToChat('ai', 'Hello! How can I assist you today?');
-        };
     </script>
 </body>
 </html>
