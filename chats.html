@@ -116,11 +116,52 @@
             }
         }
 
+        // Function to convert response to text and append to chat log
+        function appendResponseToChat(response) {
+            const chatLog = document.getElementById('chat-log');
+
+            const chatEntry = document.createElement('div');
+            chatEntry.className = 'chat-entry';
+
+            // Add user information
+            const user = document.createElement('div');
+            user.className = 'chat-user';
+            user.textContent = 'System';
+            chatEntry.appendChild(user);
+
+            // Add message content
+            const message = document.createElement('div');
+            message.className = 'chat-message';
+            message.textContent = response;
+            chatEntry.appendChild(message);
+
+            // Add timestamp
+            const timestamp = document.createElement('div');
+            timestamp.className = 'chat-timestamp';
+            timestamp.textContent = new Date().toLocaleString();
+            chatEntry.appendChild(timestamp);
+
+            // Append the chat entry to the chat log
+            chatLog.appendChild(chatEntry);
+
+            // Scroll to the bottom of the chat log
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        // Example function to simulate receiving a response
+        function simulateResponse() {
+            const response = "This is a simulated response from the system.";
+            appendResponseToChat(response);
+        }
+
         // Load chat data when the page loads
         window.onload = loadChatData;
 
         // Optional: Auto-refresh chat data every 2 seconds
         setInterval(loadChatData, 2000);
+
+        // Optional: Simulate a response after 5 seconds
+        setTimeout(simulateResponse, 5000);
     </script>
 </body>
 </html>
