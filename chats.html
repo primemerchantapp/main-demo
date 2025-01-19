@@ -7,12 +7,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
         /* Dark theme and messenger-like styling */
+        :root {
+            --background-color: #0a0a0a;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --danger-color: #ea4335;
+            --border-color: #333;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #0a0a0a;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
-            color: #e0e0e0;
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,7 +33,7 @@
             width: 100%;
             max-width: 500px;
             height: 90vh;
-            background-color: #1e1e1e;
+            background-color: var(--surface-color);
             border-radius: 10px;
             display: flex;
             flex-direction: column;
@@ -32,15 +42,18 @@
         }
 
         .chat-header {
-            background-color: #2c2c2c;
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid #333;
+            background-color: var(--surface-color);
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .connection-status {
@@ -48,14 +61,36 @@
             align-items: center;
             gap: 8px;
             font-size: 14px;
-            font-weight: normal;
         }
 
         .connection-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background-color: #34a853; /* Green for connected */
+            background-color: var(--secondary-color); /* Green for connected */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .icon-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .chat-log {
@@ -75,15 +110,15 @@
         }
 
         .message.user {
-            background-color: #4285f4;
+            background-color: var(--primary-color);
             align-self: flex-end;
             color: #fff;
         }
 
         .message.ai {
-            background-color: #333;
+            background-color: var(--border-color);
             align-self: flex-start;
-            color: #e0e0e0;
+            color: var(--text-color);
         }
 
         .message-timestamp {
@@ -95,8 +130,8 @@
         .chat-input-container {
             display: flex;
             padding: 10px;
-            background-color: #2c2c2c;
-            border-top: 1px solid #333;
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
         }
 
         .chat-input {
@@ -104,8 +139,8 @@
             padding: 10px;
             border: none;
             border-radius: 20px;
-            background-color: #333;
-            color: #e0e0e0;
+            background-color: var(--border-color);
+            color: var(--text-color);
             outline: none;
         }
 
@@ -114,7 +149,7 @@
         }
 
         .send-button {
-            background-color: #4285f4;
+            background-color: var(--primary-color);
             border: none;
             color: white;
             padding: 10px 20px;
@@ -134,11 +169,11 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #2c2c2c;
+            background-color: var(--surface-color);
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            border-top: 1px solid #333;
+            border-top: 1px solid var(--border-color);
         }
 
         .bottom-navbar button {
@@ -155,11 +190,11 @@
         }
 
         .bottom-navbar button:hover {
-            color: #4285f4;
+            color: var(--primary-color);
         }
 
         .bottom-navbar button.active {
-            color: #4285f4;
+            color: var(--primary-color);
         }
 
         .bottom-navbar button .material-symbols-outlined {
@@ -171,10 +206,19 @@
     <div class="chat-container">
         <!-- Chat Header -->
         <div class="chat-header">
-            <span>AI Chat Messenger</span>
-            <div class="connection-status">
-                <div class="connection-dot"></div>
-                <span>Connected</span>
+            <div class="header-left">
+                <div class="connection-status">
+                    <div class="connection-dot"></div>
+                    <span>Connected</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="icon-button" id="theme-toggle">
+                    <span class="material-symbols-outlined">light_mode</span>
+                </button>
+                <button class="icon-button" id="settings-toggle">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
             </div>
         </div>
 
@@ -329,6 +373,14 @@
             if (e.key === 'Enter') {
                 document.getElementById('send-button').click();
             }
+        });
+
+        // Toggle dark/light mode
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLightMode = document.body.classList.contains('light-mode');
+            themeToggle.innerHTML = isLightMode ? '<span class="material-symbols-outlined">dark_mode</span>' : '<span class="material-symbols-outlined">light_mode</span>';
         });
     </script>
 </body>
