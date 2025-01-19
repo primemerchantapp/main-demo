@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Conversations</title>
+    <style>
+        /* Basic styling for the chat interface */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-entry {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-entry:last-child {
+            border-bottom: none;
+        }
+
+        .chat-user {
+            font-weight: bold;
+            color: #4285f4;
+        }
+
+        .chat-message {
+            margin-top: 5px;
+            color: #333;
+        }
+
+        .chat-timestamp {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Button styling */
+        .refresh-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .refresh-button:hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chat Conversations</h1>
+        <div id="chat-log"></div>
+        <button class="refresh-button" onclick="loadChatData()">Refresh Chats</button>
+    </div>
+
+    <script>
+        // Function to fetch and display chat data
+        function loadChatData() {
+            try {
+                // Read chat data from localStorage
+                const chatData = JSON.parse(localStorage.getItem('chatData') || '[]');
+                const chatLog = document.getElementById('chat-log');
+                chatLog.innerHTML = ''; // Clear existing content
+
+                // Loop through chat data and create chat entries
+                chatData.forEach(entry => {
+                    const chatEntry = document.createElement('div');
+                    chatEntry.className = 'chat-entry';
+
+                    // Add user information
+                    const user = document.createElement('div');
+                    user.className = 'chat-user';
+                    user.textContent = entry.user;
+                    chatEntry.appendChild(user);
+
+                    // Add message content
+                    const message = document.createElement('div');
+                    message.className = 'chat-message';
+                    message.textContent = entry.message;
+                    chatEntry.appendChild(message);
+
+                    // Add timestamp
+                    const timestamp = document.createElement('div');
+                    timestamp.className = 'chat-timestamp';
+                    timestamp.textContent = new Date(entry.timestamp).toLocaleString();
+                    chatEntry.appendChild(timestamp);
+
+                    // Append the chat entry to the chat log
+                    chatLog.appendChild(chatEntry);
+                });
+
+                // Scroll to the bottom of the chat log
+                chatLog.scrollTop = chatLog.scrollHeight;
+            } catch (error) {
+                console.error('Error loading chat data:', error);
+                document.getElementById('chat-log').innerHTML = '<p>Error loading chat data. Please try again later.</p>';
+            }
+        }
+
+        // Load chat data when the page loads
+        window.onload = loadChatData;
+
+        // Optional: Auto-refresh chat data every 2 seconds
+        setInterval(loadChatData, 2000);
+    </script>
+</body>
+</html>
