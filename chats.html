@@ -3,165 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Conversations</title>
+    <title>AI Chat Messenger</title>
     <style>
-        /* Basic styling for the chat interface */
+        /* Dark theme and messenger-like styling */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #0a0a0a;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .chat-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
-        .chat-entry {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .chat-entry:last-child {
-            border-bottom: none;
-        }
-
-        .chat-user {
+        .chat-header {
+            background-color: #2c2c2c;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
             font-weight: bold;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #34a853; /* Green for connected */
+        }
+
+        .chat-log {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message.user {
+            background-color: #4285f4;
+            align-self: flex-end;
+            color: #fff;
+        }
+
+        .message.ai {
+            background-color: #333;
+            align-self: flex-start;
+            color: #e0e0e0;
+        }
+
+        .message-timestamp {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border-top: 1px solid #333;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            background-color: #333;
+            color: #e0e0e0;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: #888;
+        }
+
+        .send-button {
+            background-color: #4285f4;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .send-button:hover {
+            background-color: #357abd;
+        }
+
+        /* Bottom Navbar */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #2c2c2c;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+        }
+
+        .bottom-navbar button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .bottom-navbar button:hover {
             color: #4285f4;
         }
 
-        .chat-message {
-            margin-top: 5px;
-            color: #333;
+        .bottom-navbar button.active {
+            color: #4285f4;
         }
 
-        .chat-timestamp {
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        /* Button styling */
-        .refresh-button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .refresh-button:hover {
-            background-color: #357abd;
+        .bottom-navbar button .material-symbols-outlined {
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <h1>Chat Conversations</h1>
-        <div id="chat-log"></div>
-        <button class="refresh-button" onclick="loadChatData()">Refresh Chats</button>
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <span>AI Chat Messenger</span>
+            <div class="connection-status">
+                <div class="connection-dot"></div>
+                <span>Connected</span>
+            </div>
+        </div>
+
+        <!-- Chat Log -->
+        <div class="chat-log" id="chat-log">
+            <!-- Messages will be dynamically added here -->
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
+            <button class="send-button" id="send-button">Send</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navbar -->
+    <div class="bottom-navbar">
+        <button onclick="window.location.href='index.html'">
+            <span class="material-symbols-outlined">home</span>
+            <span>Home</span>
+        </button>
+        <button class="active">
+            <span class="material-symbols-outlined">chat</span>
+            <span>Chat</span>
+        </button>
+        <button onclick="window.location.href='settings.html'">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Settings</span>
+        </button>
+        <button onclick="window.location.href='profile.html'">
+            <span class="material-symbols-outlined">person</span>
+            <span>Profile</span>
+        </button>
     </div>
 
     <script>
-        // Function to fetch and display chat data
-        function loadChatData() {
-            try {
-                // Read chat data from localStorage
-                const chatData = JSON.parse(localStorage.getItem('chatData') || '[]');
-                const chatLog = document.getElementById('chat-log');
-                chatLog.innerHTML = ''; // Clear existing content
-
-                // Loop through chat data and create chat entries
-                chatData.forEach(entry => {
-                    const chatEntry = document.createElement('div');
-                    chatEntry.className = 'chat-entry';
-
-                    // Add user information
-                    const user = document.createElement('div');
-                    user.className = 'chat-user';
-                    user.textContent = entry.user;
-                    chatEntry.appendChild(user);
-
-                    // Add message content
-                    const message = document.createElement('div');
-                    message.className = 'chat-message';
-                    message.textContent = entry.message;
-                    chatEntry.appendChild(message);
-
-                    // Add timestamp
-                    const timestamp = document.createElement('div');
-                    timestamp.className = 'chat-timestamp';
-                    timestamp.textContent = new Date(entry.timestamp).toLocaleString();
-                    chatEntry.appendChild(timestamp);
-
-                    // Append the chat entry to the chat log
-                    chatLog.appendChild(chatEntry);
-                });
-
-                // Scroll to the bottom of the chat log
-                chatLog.scrollTop = chatLog.scrollHeight;
-            } catch (error) {
-                console.error('Error loading chat data:', error);
-                document.getElementById('chat-log').innerHTML = '<p>Error loading chat data. Please try again later.</p>';
-            }
-        }
-
-        // Function to convert response to text and append to chat log
-        function appendResponseToChat(response) {
+        // Function to add a message to the chat log
+        function addMessageToChat(sender, message) {
             const chatLog = document.getElementById('chat-log');
 
-            const chatEntry = document.createElement('div');
-            chatEntry.className = 'chat-entry';
+            // Create message container
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender === 'user' ? 'user' : 'ai');
 
-            // Add user information
-            const user = document.createElement('div');
-            user.className = 'chat-user';
-            user.textContent = 'System';
-            chatEntry.appendChild(user);
-
-            // Add message content
-            const message = document.createElement('div');
-            message.className = 'chat-message';
-            message.textContent = response;
-            chatEntry.appendChild(message);
+            // Add message text
+            const messageText = document.createElement('div');
+            messageText.textContent = message;
+            messageDiv.appendChild(messageText);
 
             // Add timestamp
             const timestamp = document.createElement('div');
-            timestamp.className = 'chat-timestamp';
-            timestamp.textContent = new Date().toLocaleString();
-            chatEntry.appendChild(timestamp);
+            timestamp.classList.add('message-timestamp');
+            timestamp.textContent = new Date().toLocaleTimeString();
+            messageDiv.appendChild(timestamp);
 
-            // Append the chat entry to the chat log
-            chatLog.appendChild(chatEntry);
+            // Append message to chat log
+            chatLog.appendChild(messageDiv);
 
             // Scroll to the bottom of the chat log
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        // Example function to simulate receiving a response
-        function simulateResponse() {
-            const response = "This is a simulated response from the system.";
-            appendResponseToChat(response);
+        // Function to simulate AI response
+        function simulateAIResponse(userMessage) {
+            setTimeout(() => {
+                const aiResponse = `You said: "${userMessage}". This is the AI's response.`;
+                addMessageToChat('ai', aiResponse);
+            }, 1000); // Simulate a 1-second delay for the AI response
         }
 
-        // Load chat data when the page loads
-        window.onload = loadChatData;
+        // Event listener for the send button
+        document.getElementById('send-button').addEventListener('click', () => {
+            const chatInput = document.getElementById('chat-input');
+            const userMessage = chatInput.value.trim();
 
-        // Optional: Auto-refresh chat data every 2 seconds
-        setInterval(loadChatData, 2000);
+            if (userMessage) {
+                // Add user message to chat
+                addMessageToChat('user', userMessage);
 
-        // Optional: Simulate a response after 5 seconds
-        setTimeout(simulateResponse, 5000);
+                // Clear input field
+                chatInput.value = '';
+
+                // Simulate AI response
+                simulateAIResponse(userMessage);
+            }
+        });
+
+        // Event listener for pressing Enter in the input field
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('send-button').click();
+            }
+        });
+
+        // Optional: Add a welcome message from the AI
+        window.onload = () => {
+            addMessageToChat('ai', 'Hello! How can I assist you today?');
+        };
     </script>
 </body>
 </html>
