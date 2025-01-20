@@ -127,7 +127,7 @@ You are Daisy, a highly intelligent medical assistant with expertise in all ICD 
 How may I assist you today, Miss Epp-pee?
 `
     },
-    diego: {
+    luna: {
         voice: 'Fenrir',
         sampleRate: 24000,      // Voice is very tired and low pitch
         systemInstruction: `
